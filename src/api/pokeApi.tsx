@@ -11,8 +11,8 @@ export const sendAudio = async (audioFile: any, name: string) => {
   };
   let bodyFormData = new FormData();
   bodyFormData.append("audiofile", audioFile);
-
-  const URL = `http://localhost:8000/upload?name=${name}`;
+ 
+  const URL = `http://localhost:8000/api/v1/audio/upload?name=${name}`;
   const response = await http.post(URL, bodyFormData, opts);
   return response;
 };
