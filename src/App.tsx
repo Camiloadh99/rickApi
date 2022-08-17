@@ -1,6 +1,5 @@
-import { MainComponent } from "./components";
-
+import Routes from "./Routes";
 function App() {
-  return <MainComponent />;
+  return <Routes />;
 }
 export default App;

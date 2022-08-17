@@ -1,52 +1,47 @@
-import React, { useState } from "react";
-import { sendAudio } from "src/api/pokeApi";
-import ReactAudioPlayer from "react-audio-player";
-export default function MainComponent() {
-  const [audioFile, setAudioFile] = useState<any>("");
-  const [audioFileName, setAudioFileName] = useState<string>("");
-  const [audioLink, setAudioLink] = useState<any>("");
-  const handleFile = (value: any) => {
-    let file = value.target.files[0];
-    setAudioFile(file);
-    setAudioFileName(value.target.files[0].name);
-  };
-  const uploadFile = async (audio: any, name: string) => {
+import React, { useState, useEffect } from "react";
+import { Card, TextHeader } from "../../../components";
+import { getCharacters } from "../../../api/services";
+import { IGetRickMorty } from "../../../api/interfaz";
+import { Link } from "react-router-dom";
+export default function MainComponent(props: any) {
+  const [characters, setCharacters] = useState<IGetRickMorty>();
+
+  useEffect(() => {
+    getCharactersFunction();
+  }, []);
+
+  const getCharactersFunction = async () => {
     try {
-      const response = sendAudio(audio, name);
+      const response = getCharacters();
       const data = (await response).data;
-      console.log(data);
-      setAudioLink(data);
-      console.log("Success");
+      setCharacters(data);
       return data;
     } catch (error) {
-      console.log("Error");
+      console.log(error);
     }
   };
+
   return (
     <div>
-      <input
-        type="file"
-        id="input"
-        onChange={(value) => {
-          handleFile(value);
-        }}
-      ></input>
-      <button
-        onClick={() => {
-          uploadFile(audioFile, audioFileName);
-        }}
-      >
-        Upload
-      </button>
-      <div>
-        <ReactAudioPlayer src={audioLink} autoPlay controls />
+      <div style={{ textAlign: "center" }}>
+        <TextHeader label="Personajes" type="h1" />
       </div>
-      <h3>
-        Link Audio{" "}
-        <a href={audioLink} target="_blank">
-          {audioLink}
-        </a>
-      </h3>
+
+      <div className="row">
+        {characters?.results.map((item: any) => {
+          return (
+            <div className="col-12 col-md-2">
+              <Link to={`/card/${item.id}`}>
+                <Card
+                  image={item?.image}
+                  label={item?.name}
+                  description={item?.species}
+                />
+              </Link>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
